@@ -76,25 +76,25 @@ def plot_results(meanrewards, meanoptimals):
 class AgentTester:
     def __init__(self, agentClass, N, k, iterations, params):
         self.iterations = iterations
-        self.N = N
+        self.N = N # number of sets,  2000 by default
         self.agentClass = agentClass
         self.agentTable = []
-        params['A'] = k
+        params['A'] = k # number of arms for each set
         for i in range(N):
-            self.agentTable[len(self.agentTable):] = [agentClass(**params)]
+            self.agentTable[len(self.agentTable):] = [agentClass(**params)] # <=> append
         self.bandits = Bandits(self.N, k)
         self.optimal = np.argmax(self.bandits.q_stars, axis=1)
 
     def oneStep(self):
         rewards = np.zeros(self.N)
-        optimals = np.zeros(self.N)
+        optimals = np.zeros(self.N) # if the chosen action is optimal
         for i in range(self.N):
             self.bandits.select(i)
             action = self.agentTable[i].interact()
             optimals[i] = (action == self.optimal[i]) and 1 or 0
             rewards[i] = self.bandits.act(action)
             self.agentTable[i].update(action, rewards[i])
-        return rewards.mean(), optimals.mean() * 100
+        return rewards.mean(), optimals.mean() * 100 # the percentage of optimal choice among N sets
 
     def test(self):
         meanrewards = np.zeros(self.iterations)
@@ -124,4 +124,3 @@ if __name__ == '__main__':
     except NameError as e:
         print('Unimplemented agent: {}'.format(
               e.args[0]))
-
