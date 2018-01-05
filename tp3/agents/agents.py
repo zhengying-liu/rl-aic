@@ -83,12 +83,20 @@ class UCBAgent:
 class ThompsonAgent:
     def __init__(self, A, mu_0, var_0):
         # TO IMPLEME
-        raise NotImplementedError
+        self.A = A
+        self.mu_est = np.zeros(A) + mu_0
+        self.var_est = np.zeros(A) + var_0
 
     def interact(self):
         # TO IMPLEMENT
-        raise NotImplementedError
+        q_est = np.sqrt(self.var_est) * np.random.randn(self.A) + self.mu_est
+        action = np.argmax(q_est)
+        return action
 
     def update(self, a, r):
         # TO IMPLEMENT
-        raise NotImplementedError
+        # Update Bayesian prior on
+        var0 = 1 # default variance of reward
+        mu = self.mu_est[a]
+        var = self.var_est[a]
+        self.mu_est[a], self.var_est[a] = (r * var + mu * var0)/(var + var0), var * var0 / (var + var0)
